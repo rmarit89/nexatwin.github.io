@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexatwin — Digital Twin Services</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:    #001D55;
+    --navy-m:  #024873;
+    --teal-m:  #03738C;
+    --teal:    #21BFAF;
+    --white:   #ffffff;
+    --off-white: #F4F7FA;
+    --light-bg: #EEF4F8;
+    --text-dark: #0D1F3C;
+    --text-mid:  #4A6080;
+    --text-light: rgba(255,255,255,0.75);
+    --card-dark: rgba(255,255,255,0.06);
+    --card-border-dark: rgba(33,191,175,0.15);
+    --card-light: #ffffff;
+    --card-border-light: #DDE8F0;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text-dark);
+    overflow-x: hidden;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 52px; height: 68px;
+    background: rgba(0,29,85,0.92);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(33,191,175,0.12);
+  }
+  .logo {
+    display: flex; align-items: center; gap: 11px;
+    text-decoration: none;
+  }
+  /* ── Isometric cube logo matching screenshots ── */
+  .logo-cube { width: 36px; height: 36px; flex-shrink: 0; }
+  .logo-text-wrap { display: flex; flex-direction: column; gap: 1px; }
+  .logo-name {
+    font-family: 'Outfit', sans-serif;
+    font-size: 17px; font-weight: 700; letter-spacing: 0.12em;
+    color: var(--white); line-height: 1;
+  }
+  .logo-sub {
+    font-size: 9.5px; color: var(--teal); letter-spacing: 0.08em;
+    font-weight: 400; line-height: 1;
+  }
+  .nav-links { display: flex; gap: 34px; list-style: none; }
+  .nav-links a {
+    font-size: 13.5px; color: rgba(255,255,255,0.7);
+    text-decoration: none; letter-spacing: 0.01em;
+    position: relative; padding-bottom: 4px; transition: color .2s;
+  }
+  .nav-links a:hover, .nav-links a.active { color: var(--white); }
+  .nav-links a.active::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+    height: 2px; background: var(--teal); border-radius: 2px;
+  }
+  .btn-nav {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--teal); color: var(--navy);
+    font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 13px;
+    padding: 9px 20px; border-radius: 8px; text-decoration: none;
+    transition: background .2s, transform .15s; white-space: nowrap;
+  }
+  .btn-nav:hover { background: #1aada0; transform: translateY(-1px); }
+
+  /* ─── SECTION RHYTHM ─── */
+  /* Dark sections */
+  .s-dark {
+    background: var(--navy);
+    color: var(--white);
+  }
+  /* Dark-gradient sections */
+  .s-dark-grad {
+    background: linear-gradient(160deg, #001D55 0%, #012d6e 60%, #013755 100%);
+    color: var(--white);
+  }
+  /* Teal-accent dark */
+  .s-teal {
+    background: linear-gradient(135deg, var(--navy-m) 0%, var(--teal-m) 100%);
+    color: var(--white);
+  }
+  /* Light sections */
+  .s-light {
+    background: var(--off-white);
+    color: var(--text-dark);
+  }
+  /* Pure white */
+  .s-white {
+    background: var(--white);
+    color: var(--text-dark);
+  }
+
+  /* ─── SHARED LAYOUT ─── */
+  .wrap { padding: 100px 52px; }
+  .wrap-sm { padding: 72px 52px; }
+
+  .section-tag {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.2em;
+    text-transform: uppercase; margin-bottom: 18px;
+  }
+  .s-dark .section-tag, .s-dark-grad .section-tag, .s-teal .section-tag { color: var(--teal); }
+  .s-light .section-tag, .s-white .section-tag { color: var(--teal-m); }
+  .section-tag::before { content: ''; width: 24px; height: 2px; border-radius: 2px; flex-shrink: 0; }
+  .s-dark .section-tag::before, .s-dark-grad .section-tag::before, .s-teal .section-tag::before { background: var(--teal); }
+  .s-light .section-tag::before, .s-white .section-tag::before { background: var(--teal-m); }
+
+  h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(30px, 3.8vw, 48px);
+    font-weight: 800; line-height: 1.08; margin-bottom: 18px;
+    letter-spacing: -0.01em;
+  }
+  .s-dark h2, .s-dark-grad h2, .s-teal h2 { color: var(--white); }
+  .s-light h2, .s-white h2 { color: var(--text-dark); }
+
+  .accent { color: var(--teal); }
+  .s-light .accent, .s-white .accent { color: var(--teal-m); }
+
+  .lead {
+    font-size: 16px; line-height: 1.75; max-width: 560px;
+  }
+  .s-dark .lead, .s-dark-grad .lead, .s-teal .lead { color: var(--text-light); }
+  .s-light .lead, .s-white .lead { color: var(--text-mid); }
+
+  /* ─── BUTTONS ─── */
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--teal); color: var(--navy);
+    font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 15px;
+    padding: 14px 30px; border-radius: 9px; text-decoration: none;
+    transition: all .2s; white-space: nowrap;
+  }
+  .btn-primary:hover { background: #1aada0; transform: translateY(-2px); box-shadow: 0 12px 28px rgba(33,191,175,0.3); }
+
+  .btn-ghost-light {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1.5px solid rgba(255,255,255,0.3); color: var(--white);
+    font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 15px;
+    padding: 14px 30px; border-radius: 9px; text-decoration: none;
+    transition: all .2s;
+  }
+  .btn-ghost-light:hover { border-color: var(--white); background: rgba(255,255,255,0.07); }
+
+  .btn-dark {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--navy); color: var(--white);
+    font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 15px;
+    padding: 14px 30px; border-radius: 9px; text-decoration: none;
+    border: 2px solid rgba(33,191,175,0.25); transition: all .2s;
+  }
+  .btn-dark:hover { border-color: var(--teal); }
+
+  .btn-outline-dark {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1.5px solid var(--card-border-light); color: var(--text-dark);
+    font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 15px;
+    padding: 14px 30px; border-radius: 9px; text-decoration: none;
+    transition: all .2s; background: var(--white);
+  }
+  .btn-outline-dark:hover { border-color: var(--teal-m); color: var(--teal-m); }
+
+  /* ─── CARDS ─── */
+  .card-dark {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(33,191,175,0.14);
+    border-radius: 14px; transition: border-color .2s, background .2s, transform .2s;
+  }
+  .card-dark:hover { border-color: rgba(33,191,175,0.4); background: rgba(33,191,175,0.05); transform: translateY(-4px); }
+
+  .card-light {
+    background: var(--white);
+    border: 1px solid var(--card-border-light);
+    border-radius: 14px; transition: border-color .2s, box-shadow .2s, transform .2s;
+    box-shadow: 0 2px 12px rgba(0,29,85,0.06);
+  }
+  .card-light:hover { border-color: rgba(3,115,140,0.35); transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,29,85,0.1); }
+
+  /* ─── HERO ─── */
+  #inicio {
+    min-height: 100vh;
+    display: grid; grid-template-columns: 1fr 1fr;
+    align-items: center; gap: 64px;
+    padding: 120px 52px 80px;
+    position: relative; overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 65% 55% at 70% 35%, rgba(3,115,140,0.2) 0%, transparent 65%),
+      radial-gradient(ellipse 40% 60% at 5% 85%, rgba(2,72,115,0.25) 0%, transparent 55%),
+      linear-gradient(160deg, #001030 0%, #001D55 55%, #012a60 100%);
+  }
+  .hero-grid {
+    position: absolute; inset: 0; z-index: 0; opacity: 0.055;
+    background-image:
+      linear-gradient(rgba(33,191,175,1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(33,191,175,1) 1px, transparent 1px);
+    background-size: 64px 64px;
+  }
+  .hero-left { position: relative; z-index: 1; }
+  .hero-eyebrow {
+    font-size: 10.5px; font-weight: 600; letter-spacing: 0.22em;
+    color: var(--teal); text-transform: uppercase;
+    display: flex; align-items: center; gap: 10px; margin-bottom: 26px;
+  }
+  .hero-eyebrow::before { content: ''; width: 30px; height: 2px; background: var(--teal); border-radius: 2px; }
+  h1 {
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(46px, 5.5vw, 70px);
+    font-weight: 800; line-height: 1.02;
+    color: var(--white); margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+  h1 .teal { color: var(--teal); }
+  .hero-desc {
+    font-size: 16.5px; line-height: 1.75; color: var(--text-light);
+    max-width: 500px; margin: 22px 0 38px;
+  }
+  .hero-desc strong { color: var(--teal); font-weight: 500; }
+  .hero-checks { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 42px; }
+  .hero-checks li {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 15px; color: rgba(255,255,255,0.82);
+  }
+  .hero-checks li .chk {
+    width: 20px; height: 20px; flex-shrink: 0; border-radius: 50%;
+    background: rgba(33,191,175,0.12); border: 1.5px solid var(--teal);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+
+  /* hero right card */
+  .hero-right { position: relative; z-index: 1; }
+  .dashboard-card {
+    background: rgba(1,30,75,0.7);
+    border: 1px solid rgba(33,191,175,0.2);
+    border-radius: 18px; padding: 26px;
+    backdrop-filter: blur(14px);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+  }
+  .dc-header {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
+  }
+  .dc-label { font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 600; color: var(--teal); letter-spacing: 0.12em; text-transform: uppercase; }
+  .dc-live { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--teal); }
+  .dc-live::before {
+    content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--teal);
+    animation: pulse-dot 2s infinite;
+  }
+  @keyframes pulse-dot {
+    0%,100% { opacity:1; } 50% { opacity:0.3; }
+  }
+  .building-block {
+    background: rgba(3,115,140,0.1); border: 1px solid rgba(33,191,175,0.12);
+    border-radius: 12px; padding: 20px; margin-bottom: 18px; position: relative; overflow: hidden;
+    min-height: 160px; display: flex; align-items: center; justify-content: center;
+  }
+  /* Building SVG */
+  .bld-svg { width: 85%; }
+
+  .dt-table { background: rgba(0,15,50,0.6); border-radius: 10px; overflow: hidden; }
+  .dt-head {
+    display: grid; grid-template-columns: 1.8fr 1fr 1fr 1fr;
+    padding: 9px 14px; font-size: 10px; font-weight: 600;
+    color: rgba(255,255,255,0.4); letter-spacing: 0.1em; border-bottom: 1px solid rgba(33,191,175,0.08);
+  }
+  .dt-row {
+    display: grid; grid-template-columns: 1.8fr 1fr 1fr 1fr;
+    padding: 9px 14px; font-size: 12px; color: rgba(255,255,255,0.8);
+    border-bottom: 1px solid rgba(255,255,255,0.03); align-items: center;
+    transition: background .15s;
+  }
+  .dt-row:last-child { border-bottom: none; }
+  .dt-row:hover { background: rgba(33,191,175,0.04); }
+  .dot-op { color: var(--teal); display:flex;align-items:center;gap:5px;font-size:11px; }
+  .dot-op::before { content:''; width:5px;height:5px;border-radius:50%;background:var(--teal);flex-shrink:0; }
+  .dot-mnt { color:#f59e0b;display:flex;align-items:center;gap:5px;font-size:11px; }
+  .dot-mnt::before { content:'';width:5px;height:5px;border-radius:50%;background:#f59e0b;flex-shrink:0; }
+
+  .dc-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(33,191,175,0.1); }
+  .dc-footer-label { font-size: 11px; color: rgba(255,255,255,0.4); }
+  .chips { display: flex; gap: 7px; }
+  .chip { background: rgba(33,191,175,0.08); border: 1px solid rgba(33,191,175,0.2); padding: 4px 10px; border-radius: 20px; font-size: 11px; color: var(--teal); font-weight: 500; }
+
+  /* ─── TAGLINE ─── */
+  .tagline-strip {
+    padding: 26px 52px; text-align: center;
+    background: linear-gradient(90deg, var(--teal-m), var(--teal));
+  }
+  .tagline-strip p {
+    font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 700;
+    color: var(--white); letter-spacing: 0.01em;
+  }
+  .tagline-strip span { opacity: 0.85; font-weight: 400; }
+
+  /* ─── PROCESS STEPS (light section) ─── */
+  .steps-row {
+    display: flex; gap: 0; justify-content: center;
+    padding: 60px 52px; border-bottom: 1px solid var(--card-border-light);
+  }
+  .step-item {
+    flex: 1; max-width: 200px; display: flex; flex-direction: column;
+    align-items: center; text-align: center; position: relative;
+  }
+  .step-item:not(:last-child)::after {
+    content: ''; position: absolute;
+    top: 28px; left: calc(50% + 28px); right: calc(-50% + 28px);
+    height: 1px; background: linear-gradient(90deg, var(--teal-m), rgba(3,115,140,0.15));
+  }
+  .step-n { font-size: 10px; font-weight: 700; color: var(--teal-m); letter-spacing: 0.14em; margin-bottom: 8px; }
+  .step-ico {
+    width: 54px; height: 54px; border-radius: 50%;
+    background: rgba(3,115,140,0.07); border: 1.5px solid rgba(3,115,140,0.2);
+    display: flex; align-items: center; justify-content: center; margin-bottom: 12px;
+    color: var(--teal-m);
+  }
+  .step-item.active-step .step-ico {
+    background: rgba(33,191,175,0.12); border-color: var(--teal-m);
+  }
+  .step-t { font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 700; color: var(--text-dark); margin-bottom: 5px; }
+  .step-d { font-size: 11.5px; color: var(--text-mid); line-height: 1.55; }
+
+  /* ─── COMO FUNCIONA (dark) ─── */
+  .cf-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; margin-top: 56px; }
+  .cf-steps-col { display: flex; flex-direction: column; gap: 20px; }
+  .cf-card {
+    padding: 26px 24px; border-radius: 13px; display: flex; gap: 20px; align-items: flex-start;
+    cursor: default;
+  }
+  .cf-num {
+    width: 40px; height: 40px; flex-shrink: 0; border-radius: 10px;
+    background: rgba(33,191,175,0.1); border: 1.5px solid rgba(33,191,175,0.35);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Outfit', sans-serif; font-size: 17px; font-weight: 800; color: var(--teal);
+  }
+  .cf-title { font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 7px; color: var(--white); }
+  .cf-desc { font-size: 14px; color: var(--text-light); line-height: 1.65; }
+
+  .cf-visual-col { position: sticky; top: 90px; }
+  .cf-vis-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(33,191,175,0.15);
+    border-radius: 16px; padding: 28px;
+    position: relative; overflow: hidden;
+  }
+  .cf-vis-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--teal-m), var(--teal));
+  }
+  .cf-vis-title { font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600; color: var(--teal); margin-bottom: 22px; }
+  .impact-item { margin-bottom: 20px; }
+  .impact-label { font-size: 13px; color: rgba(255,255,255,0.75); margin-bottom: 4px; }
+  .impact-bar-bg { height: 6px; background: rgba(33,191,175,0.1); border-radius: 6px; overflow: hidden; }
+  .impact-bar { height: 100%; background: linear-gradient(90deg, var(--teal-m), var(--teal)); border-radius: 6px; }
+  .cf-quote {
+    margin-top: 24px; padding: 18px; border-radius: 10px;
+    background: rgba(33,191,175,0.06); border-left: 3px solid var(--teal);
+    font-size: 13.5px; color: var(--text-light); line-height: 1.65; font-style: italic;
+  }
+
+  /* ─── SERVICIOS (light) ─── */
+  .serv-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 56px; flex-wrap: wrap; gap: 28px; }
+  .serv-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; margin-bottom: 30px; }
+  .sc { padding: 30px 24px; display: flex; flex-direction: column; gap: 14px; }
+  .sc-icon {
+    width: 50px; height: 50px; border-radius: 12px;
+    background: rgba(3,115,140,0.07); border: 1.5px solid rgba(3,115,140,0.15);
+    display: flex; align-items: center; justify-content: center; color: var(--teal-m);
+  }
+  .sc-n { font-size: 10.5px; font-weight: 700; color: var(--teal-m); letter-spacing: 0.18em; }
+  .sc-t { font-family: 'Outfit', sans-serif; font-size: 17px; font-weight: 700; color: var(--text-dark); }
+  .sc-d { font-size: 13.5px; color: var(--text-mid); line-height: 1.65; }
+  .sc-list { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-top: auto; }
+  .sc-list li { display: flex; align-items: flex-start; gap: 8px; font-size: 12.5px; color: var(--text-mid); }
+  .sc-list li::before { content: '✓'; color: var(--teal-m); font-size: 12px; flex-shrink: 0; margin-top: 1px; }
+
+  .serv-banner {
+    background: linear-gradient(135deg, rgba(3,115,140,0.06), rgba(33,191,175,0.04));
+    border: 1px solid rgba(3,115,140,0.15);
+    border-radius: 13px; padding: 22px 32px;
+    display: flex; align-items: center; gap: 18px;
+  }
+  .serv-banner-text { font-size: 15px; color: var(--text-dark); }
+  .serv-banner-text strong { color: var(--text-dark); }
+  .serv-banner-text em { color: var(--teal-m); font-style: normal; font-weight: 500; }
+
+  /* ─── DEMO (dark teal) ─── */
+  .demo-hero-block {
+    background: linear-gradient(135deg, #012740 0%, #024873 40%, #03738C 100%);
+    border-radius: 20px; padding: 64px; position: relative; overflow: hidden; margin-bottom: 60px;
+  }
+  .demo-hero-block::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 50% 80% at 80% 50%, rgba(33,191,175,0.15), transparent);
+  }
+  .demo-inner { position: relative; z-index: 1; max-width: 580px; }
+  .demo-inner h2 { color: var(--white); }
+  .demo-inner .lead { color: rgba(255,255,255,0.8); margin-bottom: 26px; }
+  .demo-badges { display: flex; gap: 22px; margin-bottom: 34px; flex-wrap: wrap; }
+  .db {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 13.5px; color: rgba(255,255,255,0.88); font-weight: 500;
+  }
+  .db::before {
+    content: '✓'; width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(255,255,255,0.12); display: flex; align-items: center;
+    justify-content: center; font-size: 11px; flex-shrink: 0;
+    color: var(--teal);
+  }
+  .demo-cards-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; margin-bottom: 48px; }
+  .demo-card { padding: 28px; }
+  .demo-card-n { font-size: 10.5px; font-weight: 700; color: var(--teal); letter-spacing: 0.15em; margin-bottom: 10px; }
+  .demo-card-t { font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 700; color: var(--white); margin-bottom: 5px; }
+  .demo-card-s { font-size: 12px; color: var(--teal); margin-bottom: 14px; }
+  .demo-card-d { font-size: 13.5px; color: rgba(255,255,255,0.75); line-height: 1.65; }
+
+  .book-block {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(33,191,175,0.2);
+    border-radius: 16px; padding: 40px 48px;
+    display: flex; align-items: center; justify-content: space-between; gap: 40px; flex-wrap: wrap;
+  }
+  .book-icon {
+    width: 58px; height: 58px; border-radius: 14px;
+    background: rgba(33,191,175,0.1); border: 1.5px solid rgba(33,191,175,0.25);
+    display: flex; align-items: center; justify-content: center; color: var(--teal); flex-shrink: 0;
+  }
+  .book-title { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 700; color: var(--white); margin-bottom: 7px; }
+  .book-desc { font-size: 14px; color: rgba(255,255,255,0.75); }
+  .book-specs { display: flex; gap: 36px; margin-top: 20px; flex-wrap: wrap; }
+  .bs-v { font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700; color: var(--teal); }
+  .bs-l { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 2px; }
+  .btn-book {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--white); color: var(--navy);
+    font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 15px;
+    padding: 16px 32px; border-radius: 10px; text-decoration: none;
+    transition: all .2s; white-space: nowrap; flex-shrink: 0;
+  }
+  .btn-book:hover { background: rgba(255,255,255,0.9); transform: translateY(-2px); }
+
+  /* ─── CASOS (white/light) ─── */
+  .casos-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-top: 56px; }
+  .caso-card { overflow: hidden; }
+  .caso-top {
+    background: linear-gradient(135deg, var(--navy), var(--navy-m));
+    padding: 28px; position: relative; overflow: hidden;
+  }
+  .caso-top::after {
+    content: ''; position: absolute; bottom: -25px; right: -25px;
+    width: 90px; height: 90px; border-radius: 50%;
+    background: rgba(33,191,175,0.08); border: 1px solid rgba(33,191,175,0.15);
+  }
+  .caso-tag {
+    display: inline-block; background: rgba(33,191,175,0.15); color: var(--teal);
+    font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 4px 11px; border-radius: 20px; border: 1px solid rgba(33,191,175,0.3); margin-bottom: 14px;
+  }
+  .caso-t { font-family: 'Outfit', sans-serif; font-size: 19px; font-weight: 700; color: var(--white); margin-bottom: 5px; }
+  .caso-s { font-size: 13px; color: rgba(255,255,255,0.7); }
+  .caso-body { padding: 26px; }
+  .caso-body p { font-size: 13.5px; color: var(--text-mid); line-height: 1.65; margin-bottom: 16px; }
+  .caso-qs { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+  .caso-qs li {
+    font-size: 13px; color: var(--teal-m); padding: 10px 14px;
+    background: rgba(3,115,140,0.05); border-radius: 8px;
+    border: 1px solid rgba(3,115,140,0.12);
+  }
+
+  /* ─── NOSOTROS (dark-grad) ─── */
+  .nos-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; margin-top: 56px; }
+  .nos-desc { font-size: 15.5px; color: var(--text-light); line-height: 1.8; margin-bottom: 36px; }
+  .nos-values { display: flex; flex-direction: column; gap: 18px; }
+  .nos-val { display: flex; gap: 16px; align-items: flex-start; padding: 20px; border-radius: 12px; }
+  .nos-val-ico { color: var(--teal); flex-shrink: 0; margin-top: 2px; }
+  .nos-val-t { font-family: 'Outfit', sans-serif; font-size: 14.5px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+  .nos-val-d { font-size: 13.5px; color: var(--text-light); line-height: 1.55; }
+  .nos-right { display: flex; flex-direction: column; gap: 20px; }
+  .nos-stat { padding: 28px; display: flex; gap: 20px; align-items: center; }
+  .nos-stat-v { font-family: 'Outfit', sans-serif; font-size: 46px; font-weight: 800; color: var(--teal); line-height: 1; flex-shrink: 0; }
+  .nos-stat-l { font-size: 14px; color: var(--text-light); line-height: 1.55; }
+  .nos-contact { padding: 28px; }
+  .nos-ct-t { font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 700; color: var(--white); margin-bottom: 10px; }
+  .nos-ct-d { font-size: 13.5px; color: var(--text-light); margin-bottom: 18px; line-height: 1.6; }
+  .nos-links { display: flex; flex-direction: column; gap: 10px; }
+  .nos-link { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--teal); text-decoration: none; transition: opacity .2s; }
+  .nos-link:hover { opacity: 0.75; }
+
+  /* ─── CTA BAND ─── */
+  .cta-band {
+    background: linear-gradient(135deg, var(--navy-m), var(--teal-m));
+    padding: 96px 52px; text-align: center; position: relative; overflow: hidden;
+  }
+  .cta-band::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 55% 70% at 50% -10%, rgba(33,191,175,0.25), transparent);
+  }
+  .cta-inner { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; }
+  .cta-inner h2 { color: var(--white); font-size: clamp(30px, 4vw, 46px); margin-bottom: 16px; }
+  .cta-inner p { font-size: 16px; color: rgba(255,255,255,0.82); margin-bottom: 38px; line-height: 1.75; }
+  .cta-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .btn-white { display: inline-flex; align-items: center; gap: 8px; background: white; color: var(--navy); font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 15px; padding: 15px 32px; border-radius: 10px; text-decoration: none; transition: all .2s; }
+  .btn-white:hover { background: rgba(255,255,255,0.92); transform: translateY(-2px); }
+  .btn-ghost-w { display: inline-flex; align-items: center; gap: 8px; border: 2px solid rgba(255,255,255,0.3); color: white; font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 15px; padding: 15px 32px; border-radius: 10px; text-decoration: none; transition: all .2s; }
+  .btn-ghost-w:hover { border-color: white; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: #00112e;
+    border-top: 1px solid rgba(33,191,175,0.1);
+    padding: 40px 52px;
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;
+  }
+  .foot-name { font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 800; letter-spacing: 0.1em; color: var(--white); }
+  .foot-sub { font-size: 12px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+  .foot-links { display: flex; gap: 28px; }
+  .foot-links a { font-size: 13px; color: rgba(255,255,255,0.45); text-decoration: none; transition: color .2s; }
+  .foot-links a:hover { color: var(--teal); }
+  .foot-copy { font-size: 12px; color: rgba(255,255,255,0.3); }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+  .hero-left > * { animation: fadeUp .7s ease both; }
+  .hero-left > *:nth-child(1) { animation-delay:.1s; }
+  .hero-left > *:nth-child(2) { animation-delay:.2s; }
+  .hero-left > *:nth-child(3) { animation-delay:.3s; }
+  .hero-left > *:nth-child(4) { animation-delay:.4s; }
+  .hero-left > *:nth-child(5) { animation-delay:.5s; }
+  .hero-right { animation: fadeUp .9s .3s ease both; }
+
+  /* ─── RESPONSIVE ─── */
+  @media(max-width:1080px) {
+    .serv-grid { grid-template-columns: 1fr 1fr; }
+    .casos-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media(max-width:860px) {
+    #inicio { grid-template-columns:1fr; padding:110px 24px 60px; }
+    .cf-layout { grid-template-columns:1fr; }
+    .demo-cards-grid { grid-template-columns:1fr; }
+    .serv-grid { grid-template-columns:1fr; }
+    .casos-grid { grid-template-columns:1fr; }
+    .nos-layout { grid-template-columns:1fr; }
+    nav { padding:0 20px; }
+    .nav-links { display:none; }
+    .wrap, .wrap-sm { padding:64px 24px; }
+    .steps-row { flex-wrap:wrap; gap:28px; padding:48px 24px; }
+    .step-item::after { display:none; }
+    .demo-hero-block { padding:36px 24px; }
+    .book-block { flex-direction:column; padding:28px 24px; }
+    footer { flex-direction:column; text-align:center; padding:32px 24px; }
+    .foot-links { flex-wrap:wrap; justify-content:center; gap:16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#inicio" class="logo">
+    <!-- Isometric cube matching the screenshots logo -->
+    <svg class="logo-cube" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="36" height="36" rx="7" fill="rgba(33,191,175,0.08)" stroke="rgba(33,191,175,0.25)" stroke-width="1"/>
+      <!-- Top face -->
+      <path d="M18 8L28 13.5L18 19L8 13.5L18 8Z" fill="rgba(33,191,175,0.18)" stroke="#21BFAF" stroke-width="1.4" stroke-linejoin="round"/>
+      <!-- Left face -->
+      <path d="M8 13.5V22L18 27.5V19L8 13.5Z" fill="rgba(33,191,175,0.08)" stroke="#21BFAF" stroke-width="1.4" stroke-linejoin="round"/>
+      <!-- Right face -->
+      <path d="M28 13.5V22L18 27.5V19L28 13.5Z" fill="rgba(33,191,175,0.12)" stroke="#21BFAF" stroke-width="1.4" stroke-linejoin="round"/>
+    </svg>
+    <div class="logo-text-wrap">
+      <span class="logo-name">NEXATWIN</span>
+      <span class="logo-sub">Digital Twin Services</span>
+    </div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#inicio" class="active">Inicio</a></li>
+    <li><a href="#como-funciona">Cómo funciona</a></li>
+    <li><a href="#demo">Demo</a></li>
+    <li><a href="#servicios">Servicios</a></li>
+    <li><a href="#casos">Casos</a></li>
+    <li><a href="#nosotros">Nosotros</a></li>
+  </ul>
+  <a href="mailto:hola@nexatwin.es" class="btn-nav">Solicitar diagnóstico ↗</a>
+</nav>
+
+<!-- ══════════ HERO — DARK ══════════ -->
+<section id="inicio" class="s-dark">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+
+  <div class="hero-left">
+    <div class="hero-eyebrow">Información que se entiende, decisiones que suman</div>
+    <h1>Tu edificio.<br><span class="teal">Bajo control.</span></h1>
+    <p class="hero-desc">
+      Convertimos la información dispersa en una base digital estructurada, visual y conectada para que tu operación sea más <strong>eficiente, segura y rentable</strong>.
+    </p>
+    <ul class="hero-checks">
+      <li><span class="chk"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M1.5 5l2.5 2.5 4.5-4" stroke="#21BFAF" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg></span>Toda la información en un solo lugar</li>
+      <li><span class="chk"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M1.5 5l2.5 2.5 4.5-4" stroke="#21BFAF" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg></span>Equipos localizados, datos confiables</li>
+      <li><span class="chk"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M1.5 5l2.5 2.5 4.5-4" stroke="#21BFAF" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg></span>Decisiones más rápidas, operación sin fricciones</li>
+    </ul>
+    <div class="hero-actions">
+      <a href="#como-funciona" class="btn-primary">Ver cómo funciona →</a>
+      <a href="#demo" class="btn-ghost-light">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M6.5 5.5l4 2.5-4 2.5V5.5z" fill="currentColor"/></svg>
+        Solicitar demo
+      </a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="dashboard-card">
+      <div class="dc-header">
+        <span class="dc-label">Modelo BIM · Vista 3D inteligente</span>
+        <span class="dc-live">En vivo</span>
+      </div>
+      <div class="building-block">
+        <svg class="bld-svg" viewBox="0 0 280 185" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Ground -->
+          <ellipse cx="140" cy="168" rx="115" ry="14" fill="rgba(33,191,175,0.07)" stroke="rgba(33,191,175,0.2)" stroke-width="1"/>
+          <!-- Main body -->
+          <rect x="42" y="52" width="172" height="116" rx="2" fill="rgba(1,40,100,0.7)" stroke="rgba(33,191,175,0.28)" stroke-width="1.4"/>
+          <!-- Floor lines -->
+          <line x1="42" y1="90" x2="214" y2="90" stroke="rgba(33,191,175,0.1)" stroke-width="1"/>
+          <line x1="42" y1="128" x2="214" y2="128" stroke="rgba(33,191,175,0.1)" stroke-width="1"/>
+          <!-- Windows row 1 -->
+          <rect x="56" y="60" width="22" height="22" rx="2" fill="rgba(33,191,175,0.28)" stroke="rgba(33,191,175,0.45)" stroke-width="0.8"/>
+          <rect x="86" y="60" width="22" height="22" rx="2" fill="rgba(33,191,175,0.12)" stroke="rgba(33,191,175,0.25)" stroke-width="0.8"/>
+          <rect x="116" y="60" width="22" height="22" rx="2" fill="rgba(33,191,175,0.32)" stroke="rgba(33,191,175,0.45)" stroke-width="0.8"/>
+          <rect x="146" y="60" width="22" height="22" rx="2" fill="rgba(33,191,175,0.15)" stroke="rgba(33,191,175,0.3)" stroke-width="0.8"/>
+          <rect x="176" y="60" width="22" height="22" rx="2" fill="rgba(33,191,175,0.22)" stroke="rgba(33,191,175,0.35)" stroke-width="0.8"/>
+          <!-- Windows row 2 -->
+          <rect x="56" y="98" width="22" height="22" rx="2" fill="rgba(33,191,175,0.14)" stroke="rgba(33,191,175,0.28)" stroke-width="0.8"/>
+          <rect x="86" y="98" width="22" height="22" rx="2" fill="rgba(33,191,175,0.35)" stroke="rgba(33,191,175,0.5)" stroke-width="0.8"/>
+          <rect x="116" y="98" width="22" height="22" rx="2" fill="rgba(33,191,175,0.18)" stroke="rgba(33,191,175,0.32)" stroke-width="0.8"/>
+          <rect x="146" y="98" width="22" height="22" rx="2" fill="rgba(33,191,175,0.28)" stroke="rgba(33,191,175,0.42)" stroke-width="0.8"/>
+          <rect x="176" y="98" width="22" height="22" rx="2" fill="rgba(33,191,175,0.38)" stroke="rgba(33,191,175,0.52)" stroke-width="0.8"/>
+          <!-- Windows row 3 -->
+          <rect x="56" y="136" width="22" height="22" rx="2" fill="rgba(33,191,175,0.32)" stroke="rgba(33,191,175,0.48)" stroke-width="0.8"/>
+          <rect x="86" y="136" width="22" height="22" rx="2" fill="rgba(33,191,175,0.14)" stroke="rgba(33,191,175,0.28)" stroke-width="0.8"/>
+          <rect x="116" y="136" width="22" height="22" rx="2" fill="rgba(33,191,175,0.2)" stroke="rgba(33,191,175,0.35)" stroke-width="0.8"/>
+          <rect x="146" y="136" width="22" height="22" rx="2" fill="rgba(33,191,175,0.35)" stroke="rgba(33,191,175,0.5)" stroke-width="0.8"/>
+          <rect x="176" y="136" width="22" height="22" rx="2" fill="rgba(33,191,175,0.18)" stroke="rgba(33,191,175,0.32)" stroke-width="0.8"/>
+          <!-- Roof equipment -->
+          <rect x="70" y="38" width="44" height="14" rx="2" fill="rgba(3,115,140,0.6)" stroke="rgba(33,191,175,0.35)" stroke-width="1"/>
+          <rect x="124" y="42" width="32" height="10" rx="2" fill="rgba(3,115,140,0.4)" stroke="rgba(33,191,175,0.25)" stroke-width="1"/>
+          <!-- Data connection lines -->
+          <line x1="42" y1="82" x2="14" y2="82" stroke="rgba(33,191,175,0.25)" stroke-width="1" stroke-dasharray="3,3"/>
+          <circle cx="14" cy="82" r="3" fill="rgba(33,191,175,0.4)"/>
+          <line x1="214" y1="115" x2="242" y2="115" stroke="rgba(33,191,175,0.25)" stroke-width="1" stroke-dasharray="3,3"/>
+          <circle cx="242" cy="115" r="3" fill="rgba(33,191,175,0.4)"/>
+          <!-- Label -->
+          <text x="140" y="180" fill="rgba(33,191,175,0.5)" font-size="8" text-anchor="middle" font-family="monospace" letter-spacing="3">PLANOS · DATOS · OPERACIÓN</text>
+        </svg>
+      </div>
+      <div class="dt-table">
+        <div class="dt-head"><span>Equipo</span><span>Ubicación</span><span>Estado</span><span>Mant.</span></div>
+        <div class="dt-row"><span>AHU-01</span><span>Azotea</span><span class="dot-op">Operativo</span><span>07/2025</span></div>
+        <div class="dt-row"><span>BOM-03</span><span>Piso 2</span><span class="dot-op">Operativo</span><span>08/2025</span></div>
+        <div class="dt-row"><span>FCU-07</span><span>Piso 5</span><span class="dot-mnt">Mant.</span><span>06/2025</span></div>
+        <div class="dt-row"><span>PLC-01</span><span>Sala téc.</span><span class="dot-op">Operativo</span><span>07/2025</span></div>
+      </div>
+      <div class="dc-footer">
+        <span class="dc-footer-label">Integración conectada</span>
+        <div class="chips"><span class="chip">CMMS</span><span class="chip">BMS</span><span class="chip">IWMS</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TAGLINE — TEAL GRADIENT -->
+<div class="tagline-strip">
+  <p>El primer paso hacia un Gemelo Digital no es la tecnología. <span>Es el orden.</span></p>
+</div>
+
+<!-- PROCESS — LIGHT -->
+<div class="s-light">
+  <div class="steps-row">
+    <div class="step-item">
+      <div class="step-n">01</div>
+      <div class="step-ico">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M15.5 15.5L19 19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </div>
+      <div class="step-t">Diagnóstico</div>
+      <div class="step-d">Entendemos tu edificio, tus retos y tu información actual.</div>
+    </div>
+    <div class="step-item">
+      <div class="step-n">02</div>
+      <div class="step-ico">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="3" width="16" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M7 8h8M7 11h5M7 14h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="step-t">Recopilación</div>
+      <div class="step-d">Reunimos planos, documentos, tablas y datos existentes.</div>
+    </div>
+    <div class="step-item active-step">
+      <div class="step-n">03</div>
+      <div class="step-ico">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="4" y="4" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M8 11h6M11 8v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </div>
+      <div class="step-t">Estructuración</div>
+      <div class="step-d">Organizamos, depuramos y vinculamos todo en una estructura clara.</div>
+    </div>
+    <div class="step-item">
+      <div class="step-n">04</div>
+      <div class="step-ico">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M7 9h8M7 13h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="step-t">Implementación</div>
+      <div class="step-d">Visualizamos la información en un entorno digital navegable.</div>
+    </div>
+    <div class="step-item">
+      <div class="step-n">05</div>
+      <div class="step-ico">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 3l2.5 5 5.5.8-4 3.9.9 5.5L11 15.5 6.1 18.2 7 12.7 3 8.8l5.5-.8z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="step-t">Entrega y soporte</div>
+      <div class="step-d">Capacitamos tu equipo y te acompañamos para crecer.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ CÓMO FUNCIONA — DARK ══════════ -->
+<section id="como-funciona" class="s-dark">
+  <div class="wrap">
+    <div class="section-tag">Nuestro proceso de trabajo</div>
+    <h2>De la información dispersa<br>al <span class="accent">control total</span></h2>
+    <p class="lead">Transformamos la documentación técnica de tu edificio en una base digital estructurada, visual y conectada, lista para optimizar la operación.</p>
+
+    <div class="cf-layout">
+      <div class="cf-steps-col">
+        <div class="cf-card card-dark">
+          <div class="cf-num">1</div>
+          <div>
+            <div class="cf-title">Auditoría y modelado BIM</div>
+            <div class="cf-desc">Analizamos tu información actual y generamos o depuramos el modelo BIM "as-built". Validación del estado real, clasificación por sistemas, modelo listo para operar.</div>
+          </div>
+        </div>
+        <div class="cf-card card-dark">
+          <div class="cf-num">2</div>
+          <div>
+            <div class="cf-title">Estructuración de datos</div>
+            <div class="cf-desc">Los datos técnicos se reorganizan en una estructura clara por activos, espacios y sistemas. Esquema compatible con COBie, fuente única de verdad, formatos listos para exportar.</div>
+          </div>
+        </div>
+        <div class="cf-card card-dark">
+          <div class="cf-num">3</div>
+          <div>
+            <div class="cf-title">Identificación de activos</div>
+            <div class="cf-desc">Cada activo técnico recibe un ID único con documentación completa adjunta: manuales, garantías y ciclo de vida proyectado. Más de 350 activos por edificio estándar.</div>
+          </div>
+        </div>
+        <div class="cf-card card-dark">
+          <div class="cf-num">4</div>
+          <div>
+            <div class="cf-title">Base operativa digital</div>
+            <div class="cf-desc">Entregamos una base digital navegable y actualizable lista para integrarse con CMMS, BMS o IWMS y evolucionar hacia un Gemelo Digital completo.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cf-visual-col">
+        <div class="cf-vis-card">
+          <div class="cf-vis-title">Impacto en la operación del edificio</div>
+          <div class="impact-item">
+            <div class="impact-label">Reducción del tiempo improductivo del personal</div>
+            <div class="impact-bar-bg"><div class="impact-bar" style="width:55%"></div></div>
+          </div>
+          <div class="impact-item">
+            <div class="impact-label">Preparación de auditorías técnicas</div>
+            <div class="impact-bar-bg"><div class="impact-bar" style="width:70%"></div></div>
+          </div>
+          <div class="impact-item">
+            <div class="impact-label">Reducción del mantenimiento correctivo</div>
+            <div class="impact-bar-bg"><div class="impact-bar" style="width:25%"></div></div>
+          </div>
+          <div class="impact-item">
+            <div class="impact-label">Control sobre el estado de los equipos</div>
+            <div class="impact-bar-bg"><div class="impact-bar" style="width:80%"></div></div>
+          </div>
+          <div class="cf-quote">
+            "La mayoría de edificios funcionan, pero pocos están verdaderamente controlados. Datos fragmentados = freno invisible = ineficiencias acumuladas."
+          </div>
+          <div style="margin-top:24px;display:flex;gap:10px;flex-wrap:wrap;">
+            <a href="#demo" class="btn-primary" style="font-size:14px;padding:12px 22px;">Ver la demo →</a>
+            <a href="mailto:hola@nexatwin.es" class="btn-ghost-light" style="font-size:14px;padding:12px 22px;">Hablar con un experto</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SERVICIOS — WHITE ══════════ -->
+<section id="servicios" class="s-white">
+  <div class="wrap">
+    <div class="serv-head">
+      <div>
+        <div class="section-tag">Lo que hacemos</div>
+        <h2>Servicios que generan<br><span class="accent">orden, control y valor</span></h2>
+      </div>
+      <p class="lead" style="max-width:380px;font-size:15px;">No entregamos solo modelos. Entregamos <strong style="color:var(--teal-m);">control.</strong><br>Información confiable, lista para decidir, operar y crecer.</p>
+    </div>
+
+    <div class="serv-grid">
+      <div class="card-light sc">
+        <div class="sc-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M16.5 16.5L20 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </div>
+        <div class="sc-n">01</div>
+        <div class="sc-t">Auditoría y modelado BIM</div>
+        <div class="sc-d">Analizamos tu información actual, auditamos el estado del edificio y generamos o depuramos el modelo BIM "as-built".</div>
+        <ul class="sc-list">
+          <li>Validación del estado real</li>
+          <li>Modelado y depuración</li>
+          <li>Clasificación por sistemas</li>
+          <li>Modelo listo para operar</li>
+        </ul>
+      </div>
+      <div class="card-light sc">
+        <div class="sc-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><ellipse cx="12" cy="7" rx="8" ry="3" stroke="currentColor" stroke-width="1.8"/><path d="M4 7v5c0 1.66 3.58 3 8 3s8-1.34 8-3V7" stroke="currentColor" stroke-width="1.8"/><path d="M4 12v5c0 1.66 3.58 3 8 3s8-1.34 8-3v-5" stroke="currentColor" stroke-width="1.8"/></svg>
+        </div>
+        <div class="sc-n">02</div>
+        <div class="sc-t">Estructuración de datos</div>
+        <div class="sc-d">Organizamos la información técnica en una estructura clara, estandarizada y consultable por todo el equipo FM.</div>
+        <ul class="sc-list">
+          <li>Esquema compatible con COBie</li>
+          <li>Vinculación activo–espacio–sistema</li>
+          <li>Fuente única de verdad</li>
+          <li>Formatos listos para exportar</li>
+        </ul>
+      </div>
+      <div class="card-light sc">
+        <div class="sc-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2v-4M9 21H5a2 2 0 01-2-2v-4m0 0h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="sc-n">03</div>
+        <div class="sc-t">Identificación de activos</div>
+        <div class="sc-d">Catalogamos cada activo técnico con un código único y toda su documentación: manuales, garantías, ciclo de vida.</div>
+        <ul class="sc-list">
+          <li>350+ activos por edificio estándar</li>
+          <li>Manuales y fichas técnicas</li>
+          <li>ID único por componente</li>
+          <li>Datos de ciclo de vida y garantía</li>
+        </ul>
+      </div>
+      <div class="card-light sc">
+        <div class="sc-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </div>
+        <div class="sc-n">04</div>
+        <div class="sc-t">Base operativa digital</div>
+        <div class="sc-d">Una base digital navegable y actualizable, lista para integrarse y crecer hacia un Gemelo Digital completo.</div>
+        <ul class="sc-list">
+          <li>Acceso para todo el equipo FM</li>
+          <li>Lista para integración (CMMS, IWMS, BMS)</li>
+          <li>Auditorías sin fricciones</li>
+          <li>Sin software especializado</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="serv-banner">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" style="color:var(--teal-m);flex-shrink:0;"><path d="M14 3l3 6 6.5 1-4.7 4.6 1.1 6.5L14 18.2 8.1 21.1l1.1-6.5L4.5 10 11 9z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      <div class="serv-banner-text">
+        <strong>No entregamos solo modelos.</strong> <em>Entregamos control.</em> Información confiable, lista para decidir, operar y crecer contigo. Desde el día uno.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ DEMO — DARK TEAL ══════════ -->
+<section id="demo" class="s-dark">
+  <div class="wrap">
+    <div class="demo-hero-block">
+      <div class="demo-inner">
+        <div class="section-tag" style="color:rgba(255,255,255,0.6);">Demo interactiva</div>
+        <h2>Descubre cómo ponemos tu edificio <span class="accent">bajo control.</span></h2>
+        <p class="lead">Te mostramos, paso a paso, cómo convertimos la información dispersa en una base digital estructurada, visual y conectada que mejora la operación desde el primer día.</p>
+        <div class="demo-badges">
+          <span class="db">Sin compromiso</span>
+          <span class="db">30–45 minutos</span>
+          <span class="db">En vivo o a tu ritmo</span>
+        </div>
+        <a href="mailto:hola@nexatwin.es?subject=Solicitud%20de%20demo" class="btn-primary">Agendar demo →</a>
+      </div>
+    </div>
+
+    <p style="font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:0.18em;text-transform:uppercase;text-align:center;margin-bottom:30px;">En la demo verás cómo:</p>
+
+    <div class="demo-cards-grid">
+      <div class="card-dark demo-card">
+        <div class="demo-card-n">01</div>
+        <div class="demo-card-t">Modelo BIM</div>
+        <div class="demo-card-s">Exploración 3D del edificio</div>
+        <div class="demo-card-d">Navega por el modelo digital y localiza cualquier activo o espacio al instante. Sin software especializado.</div>
+      </div>
+      <div class="card-dark demo-card">
+        <div class="demo-card-n">02</div>
+        <div class="demo-card-t">Datos estructurados</div>
+        <div class="demo-card-s">Información que sí se puede usar</div>
+        <div class="demo-card-d">Descubre cómo organizamos y vinculamos los datos técnicos para que estén siempre listos y confiables.</div>
+      </div>
+      <div class="card-dark demo-card">
+        <div class="demo-card-n">03</div>
+        <div class="demo-card-t">Integraciones</div>
+        <div class="demo-card-s">Visión conectada y escalable</div>
+        <div class="demo-card-d">Te mostramos cómo la base digital se conecta con tus sistemas CMMS, BMS e IWMS para impulsar decisiones inteligentes.</div>
+      </div>
+    </div>
+
+    <div class="book-block">
+      <div style="display:flex;gap:22px;align-items:flex-start;">
+        <div class="book-icon">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><rect x="3" y="3" width="20" height="20" rx="4" stroke="currentColor" stroke-width="1.8"/><path d="M8 13h10M8 17h6M8 9h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <div class="book-title">Reserva tu demo personalizada</div>
+          <div class="book-desc">Cuéntanos sobre tu edificio y te mostraremos cómo podemos ayudarte.</div>
+          <div class="book-specs">
+            <div><div class="bs-v">30–45 min</div><div class="bs-l">Enfocada en tu caso</div></div>
+            <div><div class="bs-v">En vivo</div><div class="bs-l">Con un experto</div></div>
+            <div><div class="bs-v">Sin costo</div><div class="bs-l">Sin compromiso</div></div>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center;">
+        <a href="mailto:hola@nexatwin.es?subject=Solicitud%20de%20demo" class="btn-book">Agendar demo →</a>
+        <div style="font-size:12px;color:rgba(255,255,255,0.35);margin-top:10px;">o escríbenos a <a href="mailto:hola@nexatwin.es" style="color:var(--teal);text-decoration:none;">hola@nexatwin.es</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ CASOS — LIGHT ══════════ -->
+<section id="casos" class="s-light">
+  <div class="wrap">
+    <div class="section-tag">Casos de uso</div>
+    <h2>¿Qué problemas<br><span class="accent">resolvemos?</span></h2>
+    <p class="lead">Los retos más frecuentes en la gestión de edificios tienen una solución estructurada. Esto es lo que encontramos en cada proyecto.</p>
+
+    <div class="casos-grid">
+      <div class="card-light caso-card">
+        <div class="caso-top">
+          <div class="caso-tag">Reto principal</div>
+          <div class="caso-t">Información dispersa</div>
+          <div class="caso-s">Planos, correos, carpetas sin estructura</div>
+        </div>
+        <div class="caso-body">
+          <p>Cada técnico guarda la información en un lugar distinto. Los planos están desactualizados. Nadie sabe con certeza cuál es el estado real del edificio.</p>
+          <ul class="caso-qs">
+            <li>¿Dónde está almacenada tu documentación técnica?</li>
+            <li>¿Son los planos actuales precisos y actualizados?</li>
+            <li>¿Cuántas horas por semana se dedican a buscar información?</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card-light caso-card">
+        <div class="caso-top" style="background:linear-gradient(135deg,#012740,#024873);">
+          <div class="caso-tag">Reto operativo</div>
+          <div class="caso-t">Mantenimiento reactivo</div>
+          <div class="caso-s">Sin estrategia preventiva planificada</div>
+        </div>
+        <div class="caso-body">
+          <p>Sin una base de activos estructurada, el mantenimiento es reactivo por defecto. Las intervenciones se repiten, los equipos fallan antes y el equipo técnico pierde tiempo.</p>
+          <ul class="caso-qs">
+            <li>¿Tu mantenimiento es reactivo o preventivo?</li>
+            <li>¿Se han repetido intervenciones por falta de información?</li>
+            <li>¿Cuándo sustituir tus principales equipos?</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card-light caso-card">
+        <div class="caso-top" style="background:linear-gradient(135deg,#001630,#012d55);">
+          <div class="caso-tag">Reto de continuidad</div>
+          <div class="caso-t">Dependencia de personas clave</div>
+          <div class="caso-s">Conocimiento crítico sin documentar</div>
+        </div>
+        <div class="caso-body">
+          <p>Si una persona clave deja la empresa, el conocimiento sobre el edificio se va con ella. No hay memoria institucional. Cada cambio de equipo es un reinicio.</p>
+          <ul class="caso-qs">
+            <li>¿Qué ocurre si una persona clave deja la empresa?</li>
+            <li>¿Podrías preparar una auditoría en 48 horas?</li>
+            <li>¿Dispones de un inventario completo y estructurado?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Metrics row -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:40px;">
+      <div style="background:var(--white);border:1px solid var(--card-border-light);border-radius:14px;padding:30px;text-align:center;box-shadow:0 2px 12px rgba(0,29,85,0.06);">
+        <div style="font-family:'Outfit',sans-serif;font-size:52px;font-weight:800;color:var(--teal-m);line-height:1;">350+</div>
+        <div style="font-size:14px;color:var(--text-mid);margin-top:8px;line-height:1.5;">Activos técnicos identificados y etiquetados por edificio estándar</div>
+      </div>
+      <div style="background:var(--white);border:1px solid var(--card-border-light);border-radius:14px;padding:30px;text-align:center;box-shadow:0 2px 12px rgba(0,29,85,0.06);">
+        <div style="font-family:'Outfit',sans-serif;font-size:52px;font-weight:800;color:var(--teal-m);line-height:1;">48h</div>
+        <div style="font-size:14px;color:var(--text-mid);margin-top:8px;line-height:1.5;">Listo para auditoría técnica desde el primer día de operación</div>
+      </div>
+      <div style="background:var(--white);border:1px solid var(--card-border-light);border-radius:14px;padding:30px;text-align:center;box-shadow:0 2px 12px rgba(0,29,85,0.06);">
+        <div style="font-family:'Outfit',sans-serif;font-size:52px;font-weight:800;color:var(--teal-m);line-height:1;">×1</div>
+        <div style="font-size:14px;color:var(--text-mid);margin-top:8px;line-height:1.5;">Entorno digital único para todo el equipo de facility management</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ NOSOTROS — DARK GRAD ══════════ -->
+<section id="nosotros" class="s-dark-grad">
+  <div class="wrap">
+    <div class="nos-layout">
+      <div>
+        <div class="section-tag">Nosotros</div>
+        <h2>Especialistas en <span class="accent">orden digital</span> para edificios</h2>
+        <p class="nos-desc">Somos un equipo especializado en la transformación digital de la gestión de edificios. Combinamos arquitectura, ingeniería y tecnología BIM para convertir la información dispersa de cualquier activo en una base digital operativa, escalable y de alto valor.</p>
+        <p class="nos-desc" style="margin-bottom:0;">Nuestro enfoque es claro: no vendemos software, vendemos control. Nos implicamos desde el diagnóstico hasta la entrega y el soporte continuo.</p>
+
+        <div class="nos-values" style="margin-top:36px;">
+          <div class="nos-val card-dark">
+            <div class="nos-val-ico">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2L12.5 7H18l-4.5 3.5 1.7 5.5L10 13l-5.2 3 1.7-5.5L2 7h5.5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+            </div>
+            <div>
+              <div class="nos-val-t">Precisión técnica</div>
+              <div class="nos-val-d">Cada dato, activo y modelo que entregamos está validado, nombrado y clasificado con rigor técnico.</div>
+            </div>
+          </div>
+          <div class="nos-val card-dark">
+            <div class="nos-val-ico">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.6"/><path d="M7 10l2 2 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div>
+              <div class="nos-val-t">Orientación a resultados</div>
+              <div class="nos-val-d">El impacto real en operación y costes es el centro de nuestra propuesta de valor.</div>
+            </div>
+          </div>
+          <div class="nos-val card-dark">
+            <div class="nos-val-ico">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2v16M2 10h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="10" r="3" stroke="currentColor" stroke-width="1.6"/></svg>
+            </div>
+            <div>
+              <div class="nos-val-t">Escalabilidad hacia el Gemelo Digital</div>
+              <div class="nos-val-d">Todo lo que construimos hoy es la base para un Gemelo Digital completo. Diseñado para crecer.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nos-right">
+        <div class="card-dark nos-stat">
+          <div class="nos-stat-v">350+</div>
+          <div class="nos-stat-l">Activos técnicos identificados y etiquetados por edificio estándar</div>
+        </div>
+        <div class="card-dark nos-stat">
+          <div class="nos-stat-v">48h</div>
+          <div class="nos-stat-l">Listo para auditoría desde el día uno de operación</div>
+        </div>
+        <div class="card-dark nos-stat">
+          <div class="nos-stat-v">×1</div>
+          <div class="nos-stat-l">Un único entorno digital para todo el equipo FM</div>
+        </div>
+        <div class="card-dark nos-contact">
+          <div class="nos-ct-t">Hablemos de tu edificio</div>
+          <div class="nos-ct-d">Agenda un diagnóstico gratuito de 30 minutos y descubre el punto de partida de tu operación.</div>
+          <div class="nos-links">
+            <a href="mailto:hola@nexatwin.es" class="nos-link">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M1 6l7 4 7-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+              hola@nexatwin.es
+            </a>
+            <a href="https://nexatwin.es" class="nos-link">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M8 2c-2 2-2 10 0 12M8 2c2 2 2 10 0 12M2 8h12" stroke="currentColor" stroke-width="1.2"/></svg>
+              nexatwin.es
+            </a>
+            <a href="#" class="nos-link">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.5C4.41 1.5 1.5 4.41 1.5 8c0 2.88 1.87 5.33 4.47 6.2.33.06.45-.14.45-.31v-1.1c-1.82.4-2.2-.88-2.2-.88-.3-.76-.73-1.06-.73-1.06-.6-.4.04-.4.04-.4.66.05 1.01.68 1.01.68.59 1.01 1.54.72 1.92.55.06-.43.23-.72.42-.88-1.45-.17-2.98-.73-2.98-3.24 0-.72.26-1.3.68-1.76-.07-.17-.3-.83.06-1.73 0 0 .55-.18 1.8.67.52-.14 1.08-.22 1.64-.22.55 0 1.11.08 1.63.22 1.25-.85 1.8-.67 1.8-.67.36.9.13 1.56.06 1.73.42.46.68 1.04.68 1.76 0 2.52-1.53 3.07-2.99 3.23.24.2.44.6.44 1.2v1.78c0 .17.12.38.45.31A6.51 6.51 0 0014.5 8C14.5 4.41 11.59 1.5 8 1.5z" fill="currentColor"/></svg>
+              Barcelona, España
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ CTA — TEAL ══════════ -->
+<div class="cta-band">
+  <div class="cta-inner">
+    <h2>¿Listo para mapear tu edificio?</h2>
+    <p>Un edificio puede funcionar sin control — pero un activo estratégico requiere información estructurada para generar valor real y sostenible.</p>
+    <div class="cta-actions">
+      <a href="mailto:hola@nexatwin.es?subject=Solicitud%20de%20diagn%C3%B3stico" class="btn-white">Solicitar diagnóstico gratis →</a>
+      <a href="mailto:hola@nexatwin.es?subject=Solicitud%20de%20demo" class="btn-ghost-w">Ver la demo primero</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="foot-name">NEXATWIN</div>
+    <div class="foot-sub">Digital Twin Services · Barcelona, España</div>
+  </div>
+  <div class="foot-links">
+    <a href="#inicio">Inicio</a>
+    <a href="#como-funciona">Cómo funciona</a>
+    <a href="#servicios">Servicios</a>
+    <a href="#demo">Demo</a>
+    <a href="#casos">Casos</a>
+    <a href="#nosotros">Nosotros</a>
+  </div>
+  <div class="foot-copy">hola@nexatwin.es · nexatwin.es<br>© 2025 Nexatwin</div>
+</footer>
+
+<script>
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let cur = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 90) cur = s.id; });
+    navLinks.forEach(a => {
+      a.classList.remove('active');
+      if (a.getAttribute('href') === '#' + cur) a.classList.add('active');
+    });
+  });
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const t = document.querySelector(a.getAttribute('href'));
+      if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+    });
+  });
+</script>
+</body>
+</html>
